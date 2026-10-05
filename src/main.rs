@@ -23,6 +23,10 @@ fn hottest_day(log: &Vec<i32>) -> usize {
    max_idx
 }
 
+fn count_above(log: &Vec<i32>, threshold: i32) -> usize {
+    log.iter().filter(|&&temp| temp > threshold).count()
+}
+
 fn main() {
     let mut highs: Vec<i32> = vec![72, 68, 75, 81, 79];
 
@@ -45,5 +49,11 @@ fn main() {
 
     let hottest_idx = hottest_day(&highs);
     println!("Hottest day: {} ({}°F)", DAYS[hottest_idx], highs[hottest_idx]);
+
+    let threshold = 75;
+    let above_threshold_count = count_above(&highs, threshold);
+    println!("Days exceeding {}°F: {}", threshold, above_threshold_count);
 }
+
+
 
