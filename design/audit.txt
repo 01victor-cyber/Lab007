@@ -1,0 +1,5 @@
+DAYS: Convert to a struct or collection. It will no longer be a standalone const array because day labels will be stored directly inside each Reading struct.
+highs: Convert to a struct or collection. It will be replaced by a single Vec<Reading> collection that bundles temperatures with their day labels.
+DAYS[i] paired with highs[i]: Convert to a struct or collection. The pair will be bundled directly into a single Reading struct containing day and high fields.
+the value returned by hottest_day: Leave as is. Returning a usize index into the Vec<Reading> vector remains the most efficient way to access the full Reading struct.
+the threshold 75: Leave as is. It is a primitive i32 value passed as an argument to count_above and summarize.

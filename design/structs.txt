@@ -1,0 +1,8 @@
+Reading Struct:
+- day: String
+- high: i32
+
+Summary Struct:
+- average: f64
+- hottest_day: String
+- days_above: usize
