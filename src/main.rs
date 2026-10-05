@@ -1,7 +1,6 @@
 use rand::RngExt;
 
 
-const DAYS: [&str; 7] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
    struct Reading { 
       day: String,
@@ -13,58 +12,93 @@ const DAYS: [&str; 7] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
       days_above: usize,
 }
 
-fn average_temp(log: &Vec<i32>) -> f64 {
+fn average_temp(log: &Vec<Reading>) -> f64 {
     if log.is_empty() {
        return 0.0;
  }
- let sum: i32 = log.iter().sum();
+ let sum: i32 = log.iter().map(|r| r.high).sum();
  sum as f64 / log.len() as f64
 }
 
-fn hottest_day(log: &Vec<i32>) -> usize {
+fn hottest_day(log: &Vec<Reading>) -> usize {
     if log.is_empty() {
        return 0;
  }
  let mut max_idx = 0;
- for (i, &temp) in log.iter().enumerate() {
-     if temp > log[max_idx] {
+ for (i, reading) in log.iter().enumerate() {
+     if reading.high > log[max_idx].high {
          max_idx = i;
         }
    }
    max_idx
 }
 
-fn count_above(log: &Vec<i32>, threshold: i32) -> usize {
-    log.iter().filter(|&&temp| temp > threshold).count()
+fn count_above(log: &Vec<Reading>, threshold: i32) -> usize {
+    log.iter().filter(|r| r.high > threshold).count()
 }
 
+fn summarize(log: &Vec<Reading>, threshold: i32) -> Summary {
+    if log.is_empty() {
+        return Summary {
+            average: 0.0,
+            hottest_day: String::from("N/A"),
+            days_above: 0,
+        };
+    }
+    let avg = average_temp(log);
+    let peak_idx = hottest_day(log);
+    let hottest_label = log[peak_idx].day.clone();
+    let count = count_above(log, threshold);
+ 
+    Summary {
+        average: avg,
+        hottest_day: hottest_label,
+        days_above: count,
+    }
+
+}
+      
 fn main() {
-    let mut highs: Vec<i32> = vec![72, 68, 75, 81, 79];
+    let days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    let initial_highs = vec![72, 68, 75, 81, 79];
 
-    println!("Initial temperatures:");
-    for (i, &temp) in highs.iter().enumerate() {
-        println!("{}: {}", DAYS[i], temp);
+    let mut log: Vec<Reading> = Vec::new();
+
+    // Populate log with initial readings
+    for (i, &high) in initial_highs.iter().enumerate() {
+        log.push(Reading {
+            day: days[i].to_string(),
+            high,
+        });
     }
 
-    // Add two random temperatures in 60..=100
+    // Add two random days for Sat/Sun
     let mut rng = rand::rng();
-    highs.push(rng.random_range(60..=100));
-    highs.push(rng.random_range(60..=100));
+    log.push(Reading {
+        day: days[5].to_string(),
+        high: rng.random_range(60..=100),
+    });
+    log.push(Reading {
+        day: days[6].to_string(),
+        high: rng.random_range(60..=100),
+    });
 
-    println!("\nFull 7-day forecast:");
-    for (i, &temp) in highs.iter().enumerate() {
-        println!("{}: {}", DAYS[i], temp);
+    // Print full 7-day forecast
+    println!("Full 7-day forecast:");
+    for reading in &log {
+        println!("{}: {}", reading.day, reading.high);
     }
-    let avg = average_temp(&highs);
-    println!("\nAverage temperature: {:.2}°F", avg);
 
-    let hottest_idx = hottest_day(&highs);
-    println!("Hottest day: {} ({}°F)", DAYS[hottest_idx], highs[hottest_idx]);
-
+    // Calculate summary
     let threshold = 75;
-    let above_threshold_count = count_above(&highs, threshold);
-    println!("Days exceeding {}°F: {}", threshold, above_threshold_count);
+    let summary = summarize(&log, threshold);
+
+    println!("\n--- Temperature Summary ---");
+    println!("Average Temperature: {:.2}°F", summary.average);
+    println!("Hottest Day: {}", summary.hottest_day);
+    println!("Days Above {}°F: {}", threshold, summary.days_above);
 }
+
 
 
 
