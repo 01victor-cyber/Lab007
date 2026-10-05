@@ -10,6 +10,19 @@ fn average_temp(log: &Vec<i32>) -> f64 {
  sum as f64 / log.len() as f64
 }
 
+fn hottest_day(log: &Vec<i32>) -> usize {
+    if log.is_empty() {
+       return 0;
+ }
+ let mut max_idx = 0;
+ for (i, &temp) in log.iter().enumerate() {
+     if temp > log[max_idx] {
+         max_idx = i;
+        }
+   }
+   max_idx
+}
+
 fn main() {
     let mut highs: Vec<i32> = vec![72, 68, 75, 81, 79];
 
@@ -29,4 +42,8 @@ fn main() {
     }
     let avg = average_temp(&highs);
     println!("\nAverage temperature: {:.2}°F", avg);
+
+    let hottest_idx = hottest_day(&highs);
+    println!("Hottest day: {} ({}°F)", DAYS[hottest_idx], highs[hottest_idx]);
 }
+
