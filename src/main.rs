@@ -1,6 +1,17 @@
 use rand::RngExt;
 
+
 const DAYS: [&str; 7] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+   struct Reading { 
+      day: String,
+      high: i32,
+}
+   struct Summary {
+      average: f64,
+      hottest_day: String,
+      days_above: usize,
+}
 
 fn average_temp(log: &Vec<i32>) -> f64 {
     if log.is_empty() {
